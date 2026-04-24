@@ -1,0 +1,8 @@
+com/stockpro/auth_service/dto/AuthResponse.class
+com/stockpro/auth_service/entity/Role.class
+com/stockpro/auth_service/service/AuthService.class
+com/stockpro/auth_service/dto/RegisterRequest.class
+com/stockpro/auth_service/AuthServiceApplication.class
+com/stockpro/auth_service/dto/LoginRequest.class
+com/stockpro/auth_service/config/RedisConfig.class
+com/stockpro/auth_service/dto/UserResponse.class
