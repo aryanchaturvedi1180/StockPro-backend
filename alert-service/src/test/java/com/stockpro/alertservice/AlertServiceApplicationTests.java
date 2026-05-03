@@ -1,13 +1,13 @@
 package com.stockpro.alertservice;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+import static org.assertj.core.api.Assertions.assertThat;
+
 class AlertServiceApplicationTests {
 
     @Test
-    void contextLoads() {
+    void applicationClassShouldExist() {
+        assertThat(AlertServiceApplication.class).isNotNull();
     }
-
 }

@@ -7,7 +7,8 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -22,11 +23,11 @@ import java.security.Key;
 import java.util.Date;
 import java.util.List;
 
-@Slf4j
 @Component
 public class JwtAuthGatewayFilter implements GatewayFilter {
 
-    // These paths bypass the JWT check entirely
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthGatewayFilter.class);
+
     private static final List<String> OPEN_PATHS = List.of(
             "/api/v1/auth/login",
             "/api/v1/auth/register",
@@ -47,52 +48,44 @@ public class JwtAuthGatewayFilter implements GatewayFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
 
-        // Let open paths through without any token
         boolean isOpen = OPEN_PATHS.stream().anyMatch(path::startsWith);
         if (isOpen) {
             return chain.filter(exchange);
         }
 
-        // Check Authorization header
         String authHeader = exchange.getRequest()
-                .getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+                .getHeaders()
+                .getFirst(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             log.warn("Request to {} rejected — missing Authorization header", path);
-            return writeError(exchange,
-                    HttpStatus.UNAUTHORIZED,
-                    "Missing or invalid Authorization header");
+            return writeError(exchange, HttpStatus.UNAUTHORIZED, "Missing or invalid Authorization header");
         }
 
         String token = authHeader.substring(7);
 
         try {
-            // Parse and validate JWT locally — same as your service JwtAuthFilters
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
 
-            // Double-check expiry (JJWT throws ExpiredJwtException but belt-and-suspenders)
             if (claims.getExpiration().before(new Date())) {
                 return writeError(exchange, HttpStatus.UNAUTHORIZED, "Token has expired");
             }
 
-            // Extract claims
-            String email  = claims.getSubject();
-            String role   = claims.get("role", String.class);
+            String email = claims.getSubject();
+            String role = claims.get("role", String.class);
             String userId = String.valueOf(claims.get("userId"));
 
             log.debug("Gateway auth OK — email={}, role={}, path={}", email, role, path);
 
-            // Forward original token + enriched headers to downstream service
-            // Downstream JwtAuthFilter will re-validate — this is intentional double-check
             ServerWebExchange enriched = exchange.mutate()
                     .request(req -> req.headers(headers -> {
-                        headers.set(HttpHeaders.AUTHORIZATION, authHeader); // keep original
-                        headers.set("X-Auth-Email",  email);
-                        headers.set("X-Auth-Role",   role);
+                        headers.set(HttpHeaders.AUTHORIZATION, authHeader);
+                        headers.set("X-Auth-Email", email);
+                        headers.set("X-Auth-Role", role);
                         headers.set("X-Auth-UserId", userId);
                     }))
                     .build();
@@ -117,11 +110,9 @@ public class JwtAuthGatewayFilter implements GatewayFilter {
         }
     }
 
-    private Mono<Void> writeError(ServerWebExchange exchange,
-                                  HttpStatus status, String message) {
+    private Mono<Void> writeError(ServerWebExchange exchange, HttpStatus status, String message) {
         exchange.getResponse().setStatusCode(status);
-        exchange.getResponse().getHeaders()
-                .setContentType(MediaType.APPLICATION_JSON);
+        exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         String body = String.format(
                 "{\"error\":\"%s\",\"message\":\"%s\",\"status\":%d}",
