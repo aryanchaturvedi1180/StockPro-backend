@@ -132,7 +132,8 @@ public class AuthServiceImpl implements AuthService {
                 user.getPhone(),
                 user.getRole(),
                 user.isActive(),
-                user.getCreatedAt()
+                user.getCreatedAt(),
+                user.getLastLoginAt()
         );
     }
 }

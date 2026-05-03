@@ -111,8 +111,8 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     @Transactional
     public StockLevelResponse addStock(StockUpdateRequest request) {
-        if (request.getQuantity() <= 0) {
-            throw new RuntimeException("Quantity to add must be positive.");
+        if (request.getQuantity() == null || request.getQuantity() <= 0) {
+            throw new IllegalArgumentException("Quantity to add must be positive.");
         }
         findWarehouseOrThrow(request.getWarehouseId());
 
@@ -135,8 +135,8 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     @Transactional
     public StockLevelResponse deductStock(StockUpdateRequest request) {
-        if (request.getQuantity() <= 0) {
-            throw new RuntimeException("Quantity to deduct must be positive.");
+        if (request.getQuantity() == null || request.getQuantity() <= 0) {
+            throw new IllegalArgumentException("Quantity to deduct must be positive.");
         }
         findWarehouseOrThrow(request.getWarehouseId());
 
@@ -173,11 +173,11 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     @Transactional
     public void transferStock(StockTransferRequest request) {
-        if (request.getQuantity() <= 0) {
-            throw new RuntimeException("Transfer quantity must be positive.");
+        if (request.getQuantity() == null || request.getQuantity() <= 0) {
+            throw new IllegalArgumentException("Transfer quantity must be positive.");
         }
         if (request.getFromWarehouseId().equals(request.getToWarehouseId())) {
-            throw new RuntimeException("Source and destination warehouses must be different.");
+            throw new IllegalArgumentException("Source and destination warehouses must be different.");
         }
 
         findWarehouseOrThrow(request.getFromWarehouseId());

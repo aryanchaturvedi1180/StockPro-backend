@@ -17,4 +17,5 @@ public class UserResponse {
     private Role role;
     private boolean isActive;
     private LocalDateTime createdAt;
+    private LocalDateTime lastLoginAt;
 }

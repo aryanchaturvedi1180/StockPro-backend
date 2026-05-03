@@ -1,0 +1,6 @@
+Updated alert-service changes:
+- Replaced RestTemplate with OpenFeign for auth-service token validation
+- Added AuthServiceClient Feign client
+- Enabled Feign clients in AlertServiceApplication
+- Removed RestTemplateConfig
+- Removed service.auth.url property because Feign now uses Eureka service discovery

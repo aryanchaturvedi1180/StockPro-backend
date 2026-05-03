@@ -2,7 +2,7 @@ package com.stockpro.product.controller;
 
 import com.stockpro.product.dto.ProductRequest;
 import com.stockpro.product.dto.ProductResponse;
-import com.stockpro.product.service.ProductService;;
+import com.stockpro.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

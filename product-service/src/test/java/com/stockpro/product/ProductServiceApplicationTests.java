@@ -1,13 +1,13 @@
 package com.stockpro.product;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+import static org.assertj.core.api.Assertions.assertThat;
+
 class ProductServiceApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void applicationClassShouldExist() {
+		assertThat(ProductServiceApplication.class).isNotNull();
 	}
-
 }

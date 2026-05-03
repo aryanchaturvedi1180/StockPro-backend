@@ -1,0 +1,7 @@
+CREATE DATABASE IF NOT EXISTS stockpro_auth;
+CREATE DATABASE IF NOT EXISTS stockpro_product;
+CREATE DATABASE IF NOT EXISTS stockpro_warehouse;
+CREATE DATABASE IF NOT EXISTS stockpro_purchase;
+CREATE DATABASE IF NOT EXISTS stockpro_supplier;
+CREATE DATABASE IF NOT EXISTS stockpro_movement;
+CREATE DATABASE IF NOT EXISTS stockpro_alert;

@@ -1,1 +1,8 @@
 .DS_Store
+.idea/
+.vscode/
+target/
+.idea/
+.vscode/
+target/
+*.log
