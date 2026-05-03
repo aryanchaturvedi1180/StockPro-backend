@@ -1,0 +1,9 @@
+Updated movement-service to use OpenFeign instead of RestTemplate.
+
+Changes made:
+1. Added OpenFeign dependency in pom.xml
+2. Enabled Feign clients in MovementServiceApplication
+3. Added AuthServiceClient Feign client for auth-service token validation
+4. Updated JwtAuthFilter to use AuthServiceClient instead of RestTemplate
+5. Removed RestTemplateConfig.java
+6. Removed service.auth.url from application.properties because Feign now resolves auth-service through Eureka
